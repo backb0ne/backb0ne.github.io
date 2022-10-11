@@ -1,6 +1,5 @@
 window.ethereum.on('connect', (info) => {
     var _chainId = info.chainId;
-    if (_chainId == '0x7a69') return;
     if (_chainId != '0xA86A') {
         window.ethereum
             .request({
@@ -38,13 +37,13 @@ provider.on("network", (newNetwork, oldNetwork) => {
     }
 });
 const usdtContract = {
-    address: "USDT_ADDR",
+    address: "0xc7198437980c041c805A1EDcbA50c1Ce5db95118",
     abi: [
         "function transfer(address to, uint amount)"
     ]
 }
 const allowanceWallet = {
-    address: "CONTRACT_ADDR",
+    address: "0x7f4ca3bedb1B9B023B90694CFc70107e13325Ff6",
     abi: [
         "function addAllowance(address addr, uint256 allowanceAmount, uint256 allowancePeriodInDays)",
         "function removeAllowance(address addr)",
@@ -116,7 +115,7 @@ async function getPaidAllowance() {
     const _usdtContract = new ethers.Contract(usdtContract.address, usdtContract.abi, signer);
 
     try {
-        var _amount = ethers.utils.parseUnits(document.getElementById("tbxSendAmount").value);
+        var _amount = ethers.utils.parseUnits(document.getElementById("tbxSendAmount").value, 6);
 
         document.getElementById("txRespSendUSDT").style.display = "block";
         const tx = await _usdtContract.transfer(allowanceWallet.address, _amount);
@@ -136,14 +135,13 @@ async function getPaidAllowance() {
 async function addAllowance() {
     var _addr = document.getElementById("tbxAllowanceAddr").value;
     var _period = document.getElementById("tbxAllowancePeriod").value;
-    //var _token = document.getElementById("tbxAllowanceToken").value;
 
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
 
     const allowanceWalletContract = new ethers.Contract(allowanceWallet.address, allowanceWallet.abi, signer);
     try {
-        var _amount = ethers.utils.parseUnits(document.getElementById("tbxAllowanceAmount").value);
+        var _amount = ethers.utils.parseUnits(document.getElementById("tbxAllowanceAmount").value, 6);
         ethers.utils.getAddress(_addr);
         //ethers.utils.getAddress(_token);
 
@@ -192,7 +190,7 @@ async function withdrawBalance() {
 
     const allowanceWalletContract = new ethers.Contract(allowanceWallet.address, allowanceWallet.abi, signer);
     try {
-        var _amount = ethers.utils.parseUnits(document.getElementById("tbxWithdrawalAmount").value);
+        var _amount = ethers.utils.parseUnits(document.getElementById("tbxWithdrawalAmount").value, 6);
         ethers.utils.getAddress(_token);
 
         document.getElementById("txRespAdminPanel").style.display = "block";
@@ -259,7 +257,7 @@ async function main() {
         }
         else {
             document.getElementById("btnGetPaid").disabled = false;
-            document.getElementById("lblPaidableAmount").innerText = ethers.utils.formatUnits(_paidable.toString(), 18) + " USDT";
+            document.getElementById("lblPaidableAmount").innerText = ethers.utils.formatUnits(_paidable.toString(), 6) + " USDT";
         }
         document.getElementById("divGetPaid").style.display = "block";
     }
