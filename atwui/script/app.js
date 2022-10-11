@@ -37,13 +37,13 @@ provider.on("network", (newNetwork, oldNetwork) => {
     }
 });
 const usdtContract = {
-    address: "0xc7198437980c041c805A1EDcbA50c1Ce5db95118",
+    address: "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
     abi: [
         "function transfer(address to, uint amount)"
     ]
 }
 const allowanceWallet = {
-    address: "0x7f4ca3bedb1B9B023B90694CFc70107e13325Ff6",
+    address: "0xDBeE562900f410C7482E4BCB15eA178AB4554FCa",
     abi: [
         "function addAllowance(address addr, uint256 allowanceAmount, uint256 allowancePeriodInDays)",
         "function removeAllowance(address addr)",
