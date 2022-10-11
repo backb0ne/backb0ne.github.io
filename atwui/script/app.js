@@ -1,22 +1,22 @@
 window.ethereum.on('connect', (info) => {
     var _chainId = info.chainId;
-    if(_chainId != '0xA86A')
-    {
+    if (_chainId == '0x7a69') return;
+    if (_chainId != '0xA86A') {
         window.ethereum
-        .request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId: '0xA86A',
-            chainName: 'Avalanche Mainnet C-Chain',
-            nativeCurrency: {
-              name: 'Avalanche',
-              symbol: 'AVAX',
-              decimals: 18
-            },
-            rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-            blockExplorerUrls: ['https://snowtrace.io/']
-          }]
-        });
+            .request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                    chainId: '0xA86A',
+                    chainName: 'Avalanche Mainnet C-Chain',
+                    nativeCurrency: {
+                        name: 'Avalanche',
+                        symbol: 'AVAX',
+                        decimals: 18
+                    },
+                    rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+                    blockExplorerUrls: ['https://snowtrace.io/']
+                }]
+            });
     }
 });
 
@@ -37,7 +37,12 @@ provider.on("network", (newNetwork, oldNetwork) => {
         window.location.reload();
     }
 });
-
+const usdtContract = {
+    address: "USDT_ADDR",
+    abi: [
+        "function transfer(address to, uint amount)"
+    ]
+}
 const allowanceWallet = {
     address: "CONTRACT_ADDR",
     abi: [
@@ -92,20 +97,39 @@ async function getPaidAllowance() {
 
         const tx = await allowanceWalletContract.getPaidAllowance();
         console.log(`Transaction hash: ${tx.hash}`);
-        document.getElementById(
-            "txRespGetPaid"
-        ).innerText += `\r\nTransaction hash: ${tx.hash}`;
+        document.getElementById("txRespGetPaid").innerText += `\r\nTransaction hash: ${tx.hash}`;
 
         const receipt = await tx.wait();
         console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
-        document.getElementById(
-            "txRespGetPaid"
-        ).innerText += `\r\nTransaction confirmed in block ${receipt.blockNumber}`;
+        document.getElementById("txRespGetPaid").innerText += `\r\nTransaction confirmed in block ${receipt.blockNumber}`;
     } catch (ex) {
         console.log(ex.data.message);
         document.getElementById(
             "txRespGetPaid"
         ).innerText += `\r\n${ex.data.message}`;
+    }
+
+} async function sendUSDTtoWallet() {
+
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const _usdtContract = new ethers.Contract(usdtContract.address, usdtContract.abi, signer);
+
+    try {
+        var _amount = ethers.utils.parseUnits(document.getElementById("tbxSendAmount").value);
+
+        document.getElementById("txRespSendUSDT").style.display = "block";
+        const tx = await _usdtContract.transfer(allowanceWallet.address, _amount);
+
+        console.log(`Transaction hash: ${tx.hash}`);
+        document.getElementById("txRespSendUSDT").innerText += `\r\nTransaction hash: ${tx.hash}`;
+
+        const receipt = await tx.wait();
+        console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
+        document.getElementById("txRespSendUSDT").innerText += `\r\nTransaction confirmed in block ${receipt.blockNumber}`;
+    } catch (ex) {
+        console.log(ex.data.message);
+        document.getElementById("txRespSendUSDT").innerText += `\r\n${ex.data.message}`;
     }
 
 }
@@ -202,6 +226,9 @@ async function main() {
         document.getElementById("divGetPaid").style.display = "none";
         document.getElementById("txRespAdminPanel").style.display = "none";
         document.getElementById("txRespGetPaid").style.display = "none";
+        document.getElementById("divSendUSDT").style.display = "none";
+        document.getElementById("txRespSendUSDT").style.display = "none";
+        document.getElementById("userAddress").innerText = "";
 
         return;
     }
@@ -236,5 +263,7 @@ async function main() {
         }
         document.getElementById("divGetPaid").style.display = "block";
     }
+    document.getElementById("divSendUSDT").style.display = "block";
+
     document.getElementById("btnConnectWallet").innerText = "Disconnect";
 }

@@ -16,18 +16,22 @@
 </head>
 
 <body>
-  <div class="container mt-">
-    <div class="d-flex justify-content-center align-items-center">
-      <section class="border rounded p-4 py-5 shadow">
-        <div>
-          <button id="btnConnectWallet" class="btn btn-success w-10" type="button" onclick="main();"> Connect Wallet
-          </button>
+  <nav class="navbar navbar-dark navbar-expand-md bg-dark py-3">
+    <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-wallet">
+                    <path d="M0 3a2 2 0 0 1 2-2h13.5a.5.5 0 0 1 0 1H15v2a1 1 0 0 1 1 1v8.5a1.5 1.5 0 0 1-1.5 1.5h-12A2.5 2.5 0 0 1 0 12.5V3zm1 1.732V12.5A1.5 1.5 0 0 0 2.5 14h12a.5.5 0 0 0 .5-.5V5H2a1.99 1.99 0 0 1-1-.268zM1 3a1 1 0 0 0 1 1h12V2H2a1 1 0 0 0-1 1z"></path>
+                </svg></span><span>Allowance Token Wallet</span></a>
+        <div class="collapse navbar-collapse" id="navcol-5">
+            <ul class="navbar-nav ms-auto"></ul>
+            <div class="d-flex"> <small class="fw-bold text-light mt-1" id="userAddress"></small> </div>
+
+            <button id="btnConnectWallet" class="btn btn-primary ms-md-2" type="button" onclick="main();"> Connect Wallet
         </div>
-      </section>
     </div>
-    <section class="border rounded p-4 py-5 shadow" id="divAdmin" style="display: none">
-      <div class="fw-bold">
-        <h1>Admin Panel</h1>
+</nav>
+  <div class="card">
+    <section class="card-body" id="divAdmin" style="display: none">
+      <div class="card-header">
+        <h1 class="mb-0">Admin Panel</h1>
       </div>
       <div class="mt-4">
         <div class="alert alert-info mt-2" id="txRespAdminPanel" style="display: none"> Sending tx... </div>
@@ -87,11 +91,25 @@
       </div>
     </section>
   </div>
-  <div class="d-flex min-vh-50 justify-content-center align-items-center">
-    <section class="border rounded p-4 py-5 shadow" id="divGetPaid" style="display: none">
+  <div class="card">
+    <section class="card-body" id="divSendUSDT" style="display: none">
+      <div class="mt-4">
+        <h5 class="fw-bold">Send USDT to Wallet</h5>
+        <div class="alert alert-info mt-2" id="txRespSendUSDT" style="display: none"> Sending tx... </div>
+        <form class="mt-4" id="transferForm" onsubmit="event.preventDefault(); sendUSDTtoWallet();">
+          <div class="form-group mt-2">
+            <label for="tbxSendAmount">Amount :</label>
+            <input type="text" id="tbxSendAmount" class="form-control-sm" required />
+            <button class="btn btn-success w-30" type="submit" id="btnSendUSDT">Send USDT to Wallet </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+  <div class="card">
+    <section class="card-body" id="divGetPaid" style="display: none">
       <div>
-        <div class="d-flex"> <small class="fw-bold mt-1" id="userAddress">0x</small> </div>
-        <div class="card text-light bg-dark p-4" style="width: 400px">
+        <div class="card text-light bg-dark p-4 w-40">
           <h5 class="fw-bold">Paidable Amount</h5>
           <div class="d-flex">
             <h3 class="fw-bold mt-1" id="lblPaidableAmount">0 USDT</h3>
@@ -103,7 +121,7 @@
         <div class="alert alert-info mt-2" id="txRespGetPaid" style="display: none"> Sending tx... </div>
         <form class="mt-4" id="transferForm" onsubmit="event.preventDefault(); getPaidAllowance();">
           <div class="form-group mt-3">
-            <button class="btn btn-success w-100" type="submit" id="btnGetPaid"> Get paid </button>
+            <button class="btn btn-success" type="submit" id="btnGetPaid">Claim</button>
           </div>
         </form>
       </div>
