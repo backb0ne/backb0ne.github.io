@@ -55,7 +55,8 @@ const allowanceWallet = {
         "function paused() view returns(bool)",
         "function unpause()",
         "function owner() view returns(address)",
-        "function isAllowanceExist(address _addr) view returns(bool)"
+        "function isAllowanceExist(address _addr) view returns(bool)",
+        "function getAllowance(address _addr) view returns(uint allowanceAmount, uint allowancePeriodInDays, uint whenLastAllowance, uint paid)"
     ]
 }
 async function setPauseUnpause(status) {
@@ -239,7 +240,6 @@ async function main() {
       INITIALIZING CONTRACT
       ======*/
     const allowanceWalletContract = new ethers.Contract(allowanceWallet.address, allowanceWallet.abi, signer);
-
     let _paidable = await allowanceWalletContract.getAddrPaidableAmount(userAddress);
     let _owner = await allowanceWalletContract.owner();
 
@@ -253,6 +253,11 @@ async function main() {
     }
     else {
         if (_paidable.isZero()) {
+            let _allowance = await allowanceWalletContract.getAllowance(userAddress);
+            if(!_allowance.whenLastAllowance.isZero()) {
+                document.getElementById("lblNextPayDay").innerText = new Date((_allowance.whenLastAllowance.toNumber()+_allowance.allowancePeriodInDays.toNumber()) * 1000)
+                .toLocaleString('tr-TR', { hour12: false });
+            }
             document.getElementById("btnGetPaid").disabled = true;
         }
         else {
